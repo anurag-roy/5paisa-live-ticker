@@ -2,7 +2,7 @@ import config from '@/config.json';
 import { readFileSync, writeFileSync } from 'fs';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-const token = readFileSync('./cache/token.txt', 'utf-8');
+const token = readFileSync('./app-data/token.txt', 'utf-8');
 
 type Data = {
   data: any;
@@ -41,7 +41,7 @@ export default async function handler(
       const cookie = loginCheckResponse.headers.get('Set-Cookie');
       console.log('Login Check response : ', await loginCheckResponse.json());
       if (cookie) {
-        writeFileSync('./cache/cookie.txt', cookie, 'utf-8');
+        writeFileSync('./app-data/cookie.txt', cookie, 'utf-8');
         res.status(200).json({ data: cookie });
       }
     } else {

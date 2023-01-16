@@ -52,7 +52,7 @@ export default async function handler(
       const response = await loginResponse.json();
       console.log('Login response : ', response);
       if (response?.body?.JWTToken) {
-        writeFileSync('./cache/token.txt', response.body.JWTToken, 'utf-8');
+        writeFileSync('./app-data/token.txt', response.body.JWTToken, 'utf-8');
         res.status(200).json({ data: response.body.JWTToken });
       }
     } else {

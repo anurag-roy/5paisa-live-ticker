@@ -36,5 +36,6 @@ yarn-error.log*
 next-env.d.ts
 
 # project specific secrets
-cache/*.txt
+app-data/*
+!app-data/.gitkeep
 config.json

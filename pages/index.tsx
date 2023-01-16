@@ -1,3 +1,21 @@
 export default function Home() {
-  return <h1 className="text-blue-600">Live Market Depth</h1>;
+  const rootOptions = [
+    'BEL',
+    'CUB',
+    'IDFC',
+    'IDFCFIRSTB',
+    'IEX',
+    'IOC',
+    'MANAPPURAM',
+    'MOTHERSON',
+    'NATIONALUM',
+    'ONGC',
+    'RECLTD',
+    'SAIL',
+    'TATAMOTORS',
+    'TATASTEEL',
+    'RAIN',
+  ];
+
+  return <form></form>;
 }

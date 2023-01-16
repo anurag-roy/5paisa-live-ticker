@@ -4,7 +4,7 @@ import { createInterface } from 'node:readline';
 import { columns } from './columns';
 
 export const setupDb = async () => {
-  const TABLE_NAME = 'master';
+  const TABLE_NAME = 'instrument';
   const INSERT_BATCH_SIZE = 10000;
   const dbColumnsJoined = columns.map((c) => c.dbColumnName).join(',');
 
@@ -14,6 +14,7 @@ export const setupDb = async () => {
 
   db.prepare(
     `CREATE TABLE ${TABLE_NAME} (` +
+      'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
       columns.map((c) => `${c.dbColumnName} ${c.type}`).join(',') +
       ');'
   ).run();

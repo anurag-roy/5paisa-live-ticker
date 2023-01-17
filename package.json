@@ -10,6 +10,7 @@
     "prepareData": "rimraf app-data/data.* && tsx data-preparation/index.ts"
   },
   "dependencies": {
+    "@heroicons/react": "^2.0.13",
     "@prisma/client": "^4.8.1",
     "@types/node": "18.11.18",
     "@types/react": "18.0.26",

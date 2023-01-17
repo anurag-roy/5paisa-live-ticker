@@ -18,6 +18,8 @@ export default async function handler(
       root: root,
       underlyer: expiry,
     },
+    // TODO: Remove LIMIT later
+    take: 10,
   });
   res.status(200).json({ data: instruments });
 }

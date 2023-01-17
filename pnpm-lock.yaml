@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@heroicons/react': ^2.0.13
   '@prisma/client': ^4.8.1
   '@types/better-sqlite3': ^7.6.3
   '@types/node': 18.11.18
@@ -19,6 +20,7 @@ specifiers:
   typescript: 4.9.4
 
 dependencies:
+  '@heroicons/react': 2.0.13_react@18.2.0
   '@prisma/client': 4.8.1_prisma@4.8.1
   '@types/node': 18.11.18
   '@types/react': 18.0.26
@@ -78,6 +80,14 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@heroicons/react/2.0.13_react@18.2.0:
+    resolution: {integrity: sha512-iSN5XwmagrnirWlYEWNPdCDj9aRYVD/lnK3JlsC9/+fqGF80k8C7rl+1HCvBX0dBoagKqOFBs6fMhJJ1hOg1EQ==}
+    peerDependencies:
+      react: '>= 16'
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /@next/env/13.1.2:
     resolution: {integrity: sha512-PpT4UZIX66VMTqXt4HKEJ+/PwbS+tWmmhZlazaws1a+dbUA5pPdjntQ46Jvj616i3ZKN9doS9LHx3y50RLjAWg==}

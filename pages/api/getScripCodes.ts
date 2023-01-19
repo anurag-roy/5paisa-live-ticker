@@ -10,10 +10,11 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   const { root, expiry } = req.query as { root: string; expiry: string };
+  console.log({ root, expiry });
   const prisma = new PrismaClient();
   const instruments = await prisma.instrument.findMany({
     where: {
-      exchange: 'N', // NSE
+      // exchange: 'N', // NSE
       exchangeType: 'D', // Derivative
       root: root,
       underlyer: expiry,

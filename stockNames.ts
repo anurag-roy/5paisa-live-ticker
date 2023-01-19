@@ -1,0 +1,16 @@
+export const stockNames = [
+  'BEL',
+  'CUB',
+  'IDFC',
+  'IDFCFIRSTB',
+  'IEX',
+  'IOC',
+  'MANAPPURAM',
+  'MOTHERSON',
+  'NATIONALUM',
+  'ONGC',
+  'SAIL',
+  'TATAMOTORS',
+  'TATASTEEL',
+  'RAIN',
+];

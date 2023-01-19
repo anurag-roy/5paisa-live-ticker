@@ -1,24 +1,44 @@
 import { Auth } from '@/components/Auth';
+import { SubscriptionForm } from '@/components/SubscriptionForm';
+import { stockNames } from '@/stockNames';
+import { PrismaClient } from '@prisma/client';
+import { GetServerSidePropsContext } from 'next';
 
-export default function Home() {
-  const rootOptions = [
-    'BEL',
-    'CUB',
-    'IDFC',
-    'IDFCFIRSTB',
-    'IEX',
-    'IOC',
-    'MANAPPURAM',
-    'MOTHERSON',
-    'NATIONALUM',
-    'ONGC',
-    'RECLTD',
-    'SAIL',
-    'TATAMOTORS',
-    'TATASTEEL',
-    'RAIN',
-  ];
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const prisma = new PrismaClient();
+  const result = await prisma.instrument.groupBy({
+    by: ['root', 'underlyer'],
+    where: {
+      root: {
+        in: stockNames,
+      },
+      exchangeType: 'D',
+    },
+  });
 
+  let data = result.reduce<Record<string, string[]>>((acc, row) => {
+    const { root, underlyer } = row;
+    if (root && underlyer) {
+      if (!Array.isArray(acc[root])) {
+        acc[root] = [];
+      }
+      acc[root].push(underlyer);
+    }
+    return acc;
+  }, {});
+
+  return {
+    props: {
+      data,
+    },
+  };
+}
+
+type HomeParams = {
+  data: Record<string, string[]>;
+};
+
+export default function Home({ data }: HomeParams) {
   return (
     <>
       <header className="flex items-center justify-between">
@@ -32,6 +52,9 @@ export default function Home() {
         </span>
         <Auth />
       </header>
+      <main className="mt-8 rounded-lg py-6 px-4 bg-gray-100">
+        <SubscriptionForm rootToExpiryMap={data} />
+      </main>
     </>
   );
 }

@@ -22,3 +22,11 @@
 .animated-button:focus {
   background-position: 100%;
 }
+
+table th {
+  @apply whitespace-nowrap px-2 py-3.5 text-center text-sm font-semibold text-gray-900;
+}
+
+table td {
+  @apply whitespace-nowrap px-2 py-2 tabular-nums text-center font-medium text-sm text-gray-900;
+}

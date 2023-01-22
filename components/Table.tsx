@@ -18,23 +18,35 @@ export default function Table({ instruments }: TableProps) {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white">
-          {instruments.map((i) => (
-            <tr key={i.scripcode} className="divide-x divide-gray-200">
-              <td>
-                {i.cpType === 'CE' ? '-' : (Math.random() * 100).toFixed(2)}
-              </td>
-              <td>
-                {i.cpType === 'CE' ? '-' : (Math.random() * 100).toFixed(2)}
-              </td>
-              <td className="-px-4 font-normal text-gray-500">{i.fullName}</td>
-              <td>
-                {i.cpType === 'PE' ? '-' : (Math.random() * 100).toFixed(2)}
-              </td>
-              <td>
-                {i.cpType === 'PE' ? '-' : (Math.random() * 100).toFixed(2)}
-              </td>
+          {instruments.length === 0 ? (
+            <tr>
+              <td></td>
+              <td></td>
+              <td>No data to display</td>
+              <td></td>
+              <td></td>
             </tr>
-          ))}
+          ) : (
+            instruments.map((i) => (
+              <tr key={i.scripcode} className="divide-x divide-gray-200">
+                <td>
+                  {i.cpType === 'CE' ? '-' : (Math.random() * 100).toFixed(2)}
+                </td>
+                <td>
+                  {i.cpType === 'CE' ? '-' : (Math.random() * 100).toFixed(2)}
+                </td>
+                <td className="-px-4 font-normal text-gray-500">
+                  {i.fullName}
+                </td>
+                <td>
+                  {i.cpType === 'PE' ? '-' : (Math.random() * 100).toFixed(2)}
+                </td>
+                <td>
+                  {i.cpType === 'PE' ? '-' : (Math.random() * 100).toFixed(2)}
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

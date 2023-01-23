@@ -1,7 +1,7 @@
-import { instrument } from '@prisma/client';
+import { UiInstrument } from './SubscriptionForm';
 
 type TableProps = {
-  instruments: instrument[];
+  instruments: UiInstrument[];
 };
 
 export default function Table({ instruments }: TableProps) {
@@ -18,7 +18,7 @@ export default function Table({ instruments }: TableProps) {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white">
-          {instruments.length === 0 ? (
+          {instruments?.length === 0 ? (
             <tr>
               <td></td>
               <td></td>
@@ -27,23 +27,15 @@ export default function Table({ instruments }: TableProps) {
               <td></td>
             </tr>
           ) : (
-            instruments.map((i) => (
+            instruments?.map((i) => (
               <tr key={i.scripcode} className="divide-x divide-gray-200">
-                <td>
-                  {i.cpType === 'CE' ? '-' : (Math.random() * 100).toFixed(2)}
-                </td>
-                <td>
-                  {i.cpType === 'CE' ? '-' : (Math.random() * 100).toFixed(2)}
-                </td>
+                <td>{i.cpType === 'PE' ? '-' : i?.bid}</td>
+                <td>{i.cpType === 'PE' ? '-' : i?.ask}</td>
                 <td className="-px-4 font-normal text-gray-500">
                   {i.fullName}
                 </td>
-                <td>
-                  {i.cpType === 'PE' ? '-' : (Math.random() * 100).toFixed(2)}
-                </td>
-                <td>
-                  {i.cpType === 'PE' ? '-' : (Math.random() * 100).toFixed(2)}
-                </td>
+                <td>{i.cpType === 'CE' ? '-' : i?.bid}</td>
+                <td>{i.cpType === 'CE' ? '-' : i?.ask}</td>
               </tr>
             ))
           )}

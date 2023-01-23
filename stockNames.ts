@@ -1,6 +1,7 @@
 export const stockNames = [
   'BEL',
   'CUB',
+  'IBULHSGFIN',
   'IDFC',
   'IDFCFIRSTB',
   'IEX',

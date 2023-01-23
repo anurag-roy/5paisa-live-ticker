@@ -54,7 +54,7 @@ export default function Home({ data }: HomeParams) {
   return (
     <>
       <Header />
-      <main className="mt-8 rounded-lg py-6 px-4 bg-gray-100">
+      <main className="mt-6 rounded-lg py-6 bg-gray-100 grow overflow-y-auto flex flex-col">
         <SubscriptionForm rootToExpiryMap={data} />
       </main>
     </>

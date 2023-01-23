@@ -1,3 +1,4 @@
+// NSE Derivatives
 export const stockNames = [
   'BEL',
   'CUB',
@@ -15,3 +16,6 @@ export const stockNames = [
   'TATASTEEL',
   'RAIN',
 ];
+
+// MCX Derivatives
+// export const stockNames = ['GOLD', 'GOLDM'];

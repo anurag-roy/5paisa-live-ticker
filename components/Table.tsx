@@ -6,9 +6,9 @@ type TableProps = {
 
 export default function Table({ instruments }: TableProps) {
   return (
-    <div className="mx-8 my-12 overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
-      <table className="min-w-full divide-y divide-gray-300">
-        <thead className="bg-gray-50">
+    <div className="mx-8 mt-8 mb-4 overflow-y-auto shadow ring-1 ring-black ring-opacity-5 rounded-lg grow">
+      <table className="min-w-full h-full divide-y divide-gray-300">
+        <thead className="bg-gray-50 sticky top-0">
           <tr className="divide-x divide-gray-200">
             <th scope="col">Bid</th>
             <th scope="col">Ask</th>
@@ -17,12 +17,12 @@ export default function Table({ instruments }: TableProps) {
             <th scope="col">Ask</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200 bg-white">
+        <tbody className="divide-y divide-gray-200 bg-white overflow-y-auto">
           {instruments?.length === 0 ? (
             <tr>
               <td></td>
               <td></td>
-              <td>No data to display</td>
+              <td className="text-lg">No data to display.</td>
               <td></td>
               <td></td>
             </tr>

@@ -1,4 +1,4 @@
-import config from '@/config.json';
+import env from '@/env.json';
 import { readFileSync, writeFileSync } from 'fs';
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -12,11 +12,11 @@ const url = 'https://openfeed.5paisa.com/Feeds/api/UserActivity/LoginCheck';
 const payload = {
   head: {
     requestCode: '5PLoginCheck',
-    key: config.APP_USER_KEY,
+    key: env.APP_USER_KEY,
     appVer: '1.0.0',
-    appName: config.APP_NAME,
+    appName: env.APP_NAME,
     osName: 'WEB',
-    LoginId: config.CLIENT_ID,
+    LoginId: env.CLIENT_ID,
   },
   body: {
     RegistrationID: token,

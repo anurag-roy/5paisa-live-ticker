@@ -1,6 +1,6 @@
 import { Header } from '@/components/Header';
 import { SubscriptionForm } from '@/components/SubscriptionForm';
-import { stockNames } from '@/stockNames';
+import config from '@/config';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { GetServerSidePropsContext } from 'next';
 
@@ -17,8 +17,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   from
     instrument i
   where
-    i.root in (${Prisma.join(stockNames)})
-    and i.exchange = 'N'
+    i.root in (${Prisma.join(config.stockNames)})
+    and i.exchange = ${config.exchange}
     and i.exchangeType = 'D'
   group by
     i.root,
@@ -46,11 +46,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   };
 }
 
-type HomeParams = {
+type HomeProps = {
   data: Record<string, string[]>;
 };
 
-export default function Home({ data }: HomeParams) {
+export default function Home({ data }: HomeProps) {
   return (
     <>
       <Header />

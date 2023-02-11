@@ -1,4 +1,5 @@
-import config from '@/config.json';
+import config from '@/config';
+import env from '@/env.json';
 import { pick } from '@/utils/ui';
 import { instrument, PrismaClient } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -12,7 +13,7 @@ type Data = {
 };
 
 const getLTP = async (i: instrument): Promise<number> => {
-  const marketUrl = `${config.BASE_URL}/MarketFeed`;
+  const marketUrl = `${env.BASE_URL}/MarketFeed`;
 
   const request = [
     {
@@ -30,13 +31,13 @@ const getLTP = async (i: instrument): Promise<number> => {
 
   const marketPayLoad = {
     head: {
-      appName: config.APP_NAME,
+      appName: env.APP_NAME,
       appVer: '1.0.0',
-      key: config.APP_USER_KEY,
+      key: env.APP_USER_KEY,
       osName: 'WEB',
       requestCode: '5PMF',
-      userId: config.APP_USER_ID,
-      password: config.APP_PASSWORD,
+      userId: env.APP_USER_ID,
+      password: env.APP_PASSWORD,
     },
     body: {
       Count: 1,
@@ -68,14 +69,16 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   const { root, expiry } = req.query as { root: string; expiry: string };
-
+  const expiryExcludingDate = expiry.split(' ').slice(1).join(' ');
   const prisma = new PrismaClient();
   const instruments = await prisma.instrument.findMany({
     where: {
-      exchange: 'N', // NSE
+      exchange: config.exchange, // 'N' for NSE, 'M' for MCX
       exchangeType: 'D', // Derivative
       root: root,
-      underlyer: expiry,
+      underlyer: {
+        endsWith: expiryExcludingDate,
+      },
     },
   });
 
@@ -90,6 +93,7 @@ export default async function handler(
         .map((i) =>
           pick(i, [
             'fullName',
+            'name',
             'root',
             'underlyer',
             'exchange',

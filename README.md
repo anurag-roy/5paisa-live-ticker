@@ -6,42 +6,53 @@ This is a live market depth dashboard using 5paisa trading APIs and Next.js.
 
 ## Get started
 
-#### Setup config
-Create a `config.json` by duplicating `example.config.json` and filling with your own values.
+#### Setup env
+
+Create a `env.json` by duplicating `example.env.json` and filling with your own values.
+
 ```
-cp example.config.json config.json
+cp example.env.json env.json
 ```
 
 #### Install dependencies
+
 ```
 pnpm i
 ```
 
 #### Create scrip master database
+
 ```
 pnpm prepareData
 ```
+
 This fetches the master CSV from 5paisa and creates an SQLite DB for faster data lookups. You need to run this every morning, to have the latest data in your DB.
 
 #### Setup prisma
+
 ```
 pnpx prisma generate
 ```
+
 This needs to be done once (or everytime the DB schema is changed)
 
 #### Start the server
+
 ```
 pnpm dev
 ```
 
 ## Related
+
 - [5paisa API scripts](https://github.com/anurag-roy/5paisa-test)
 - [NSE Banned securities for the day](https://nse-banned-securities.deno.dev/)
 - [Convert a CSV to an SQLite DB](https://github.com/anurag-roy/csv-to-sqlite)
 
 ## Contact
+
 - [Twitter](https://twitter.com/anurag__roy)
 - [Email](mailto:anuragroy@duck.com)
 
 ## License
+
 [MIT © 2023 Anurag Roy](/LICENSE)

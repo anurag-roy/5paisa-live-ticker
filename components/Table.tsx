@@ -1,10 +1,27 @@
-import { UiInstrument } from './SubscriptionForm';
+import { useInstrumentStore } from '@/store/instrumentStore';
+import { memo } from 'react';
 
-type TableProps = {
-  instruments: UiInstrument[];
+type TableRowProps = {
+  name: string | null;
+  cpType: string | null;
+  bid?: number;
+  ask?: number;
 };
 
-export default function Table({ instruments }: TableProps) {
+const TableRow = memo(({ name, cpType, bid, ask }: TableRowProps) => {
+  return (
+    <tr className="divide-x divide-gray-200">
+      <td>{cpType === 'PE' ? '-' : bid}</td>
+      <td>{cpType === 'PE' ? '-' : ask}</td>
+      <td className="-px-4 font-normal text-gray-500">{name}</td>
+      <td>{cpType === 'CE' ? '-' : bid}</td>
+      <td>{cpType === 'CE' ? '-' : ask}</td>
+    </tr>
+  );
+});
+
+export const Table = memo(() => {
+  const instruments = useInstrumentStore((state) => state.instruments);
   return (
     <div className="mx-8 mt-8 mb-4 overflow-y-auto shadow ring-1 ring-black ring-opacity-5 rounded-lg grow">
       <table className="min-w-full h-full divide-y divide-gray-300">
@@ -28,19 +45,17 @@ export default function Table({ instruments }: TableProps) {
             </tr>
           ) : (
             instruments?.map((i) => (
-              <tr key={i.scripcode} className="divide-x divide-gray-200">
-                <td>{i.cpType === 'PE' ? '-' : i?.bid}</td>
-                <td>{i.cpType === 'PE' ? '-' : i?.ask}</td>
-                <td className="-px-4 font-normal text-gray-500">
-                  {i.fullName}
-                </td>
-                <td>{i.cpType === 'CE' ? '-' : i?.bid}</td>
-                <td>{i.cpType === 'CE' ? '-' : i?.ask}</td>
-              </tr>
+              <TableRow
+                key={i.scripcode}
+                name={i.name}
+                cpType={i.cpType}
+                ask={i.ask}
+                bid={i.bid}
+              />
             ))
           )}
         </tbody>
       </table>
     </div>
   );
-}
+});

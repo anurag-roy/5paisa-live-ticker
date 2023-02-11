@@ -1,9 +1,10 @@
-import config from '@/config.json';
-import { stockNames } from '@/stockNames';
+import config from '@/config';
+import env from '@/env.json';
+import { useInstrumentStore } from '@/store/instrumentStore';
 import { instrument } from '@prisma/client';
-import { FormEvent, useEffect, useReducer, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { ComboBoxInput } from './ComboBoxInput';
-import Table from './Table';
+import { Table } from './Table';
 
 type TickData = {
   Exch: string;
@@ -34,54 +35,31 @@ const subscriptionItemMapper = (i: UiInstrument) => {
   };
 };
 
-type UpdateAction = {
-  type: 'update';
-  payload: {
-    token: number;
-    bid: number;
-    ask: number;
-  };
-};
+type SubscriptionItem = ReturnType<typeof subscriptionItemMapper>;
 
-type AddAction = {
-  type: 'add';
-  payload: UiInstrument[];
-};
-
-const reducer = (state: UiInstrument[], action: AddAction | UpdateAction) => {
-  const { type, payload } = action;
-  switch (type) {
-    case 'add':
-      return payload;
-    case 'update':
-      const foundInstrument = state.find((i) => payload.token === i.scripcode);
-      if (foundInstrument) {
-        foundInstrument.bid = payload.bid;
-        foundInstrument.ask = payload.ask;
-      }
-      return [...state];
-    default:
-      return state;
-  }
-};
-
-type SubscriptionFormParams = {
+type SubscriptionFormProps = {
   rootToExpiryMap: Record<string, string[]>;
 };
 
-export function SubscriptionForm({ rootToExpiryMap }: SubscriptionFormParams) {
-  const [selectedStock, setSelectedStock] = useState(stockNames[0]);
+export function SubscriptionForm({ rootToExpiryMap }: SubscriptionFormProps) {
+  const [selectedStock, setSelectedStock] = useState(config.stockNames[0]);
   const [expiryOptions, setExpiryOptions] = useState<string[]>(
-    rootToExpiryMap[stockNames[0]]
+    rootToExpiryMap[config.stockNames[0]]
+  );
+  const [subscribedStocks, setSubscribedStocks] = useState<SubscriptionItem[]>(
+    []
+  );
+  const setStore = useInstrumentStore((state) => state.setStore);
+  const updateInstrument = useInstrumentStore(
+    (state) => state.updateInstrument
   );
 
-  const [instrumentState, dispatch] = useReducer(reducer, []);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [socket, setSocket] = useState<WebSocket | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const wssUrl = `wss://openfeed.5paisa.com/Feeds/api/chat?Value1=${token}|${config.CLIENT_ID}`;
+    const wssUrl = `wss://openfeed.5paisa.com/Feeds/api/chat?Value1=${token}|${env.CLIENT_ID}`;
     const ws = new WebSocket(wssUrl);
 
     ws.onopen = (_event) => {
@@ -97,50 +75,42 @@ export function SubscriptionForm({ rootToExpiryMap }: SubscriptionFormParams) {
     }
   }, [selectedStock]);
 
-  const subscribeToLiveFeed = (
-    subscriptionList: { Exch: string; ExchType: string; ScripCode: number }[]
-  ) => {
+  const subscribeToLiveFeed = (subscriptionList: SubscriptionItem[]) => {
     console.log(`Subscribing to ${subscriptionList.length} items`);
     const data = {
       Method: 'MarketDepthService',
       Operation: 'Subscribe',
-      ClientCode: config.CLIENT_ID,
+      ClientCode: env.CLIENT_ID,
       MarketFeedData: subscriptionList,
     };
     socket!.send(JSON.stringify(data));
 
     socket!.onmessage = (eventData) => {
       const tickData = JSON.parse(eventData.data) as TickData;
-      dispatch({
-        type: 'update',
-        payload: {
-          token: tickData.Token,
-          bid: tickData.Details[0].Price,
-          ask: tickData.Details[5].Price,
-        },
-      });
+      updateInstrument(
+        tickData.Token,
+        tickData.Details[0].Price,
+        tickData.Details[5].Price
+      );
     };
 
+    setSubscribedStocks(subscriptionList);
     setIsSubscribed(true);
   };
 
-  const unsubscribeFromLiveFeed = (
-    subscriptionList: { Exch: string; ExchType: string; ScripCode: number }[]
-  ) => {
+  const unsubscribeFromLiveFeed = (subscriptionList: SubscriptionItem[]) => {
     console.log(`Unsubscribing from ${subscriptionList.length} items`);
     const data = {
       Method: 'MarketDepthService',
       Operation: 'Unsubscribe',
-      ClientCode: config.CLIENT_ID,
+      ClientCode: env.CLIENT_ID,
       MarketFeedData: subscriptionList,
     };
     socket!.send(JSON.stringify(data));
     socket!.onmessage = () => {};
 
-    dispatch({
-      type: 'add',
-      payload: [],
-    });
+    setStore([]);
+    setSubscribedStocks([]);
     setIsSubscribed(false);
   };
 
@@ -164,7 +134,7 @@ export function SubscriptionForm({ rootToExpiryMap }: SubscriptionFormParams) {
     event.preventDefault();
 
     if (isSubscribed) {
-      unsubscribeFromLiveFeed(instrumentState.map(subscriptionItemMapper));
+      unsubscribeFromLiveFeed(subscribedStocks);
     } else {
       const formData = new FormData(event.currentTarget);
       for (let [name, value] of Array.from(formData.entries())) {
@@ -173,10 +143,7 @@ export function SubscriptionForm({ rootToExpiryMap }: SubscriptionFormParams) {
       const searchParams = new URLSearchParams(formData as any).toString();
 
       const filteredInstruments = await getScripCodes(searchParams);
-      dispatch({
-        type: 'add',
-        payload: filteredInstruments,
-      });
+      setStore(filteredInstruments);
       subscribeToLiveFeed(filteredInstruments.map(subscriptionItemMapper));
     }
   };
@@ -189,7 +156,7 @@ export function SubscriptionForm({ rootToExpiryMap }: SubscriptionFormParams) {
       >
         <ComboBoxInput
           name="root"
-          items={stockNames}
+          items={config.stockNames}
           selectedItem={selectedStock}
           setSelectedItem={setSelectedStock}
         />
@@ -201,7 +168,7 @@ export function SubscriptionForm({ rootToExpiryMap }: SubscriptionFormParams) {
           {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
         </button>
       </form>
-      <Table instruments={instrumentState} />
+      <Table />
     </>
   );
 }
